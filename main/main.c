@@ -17,6 +17,8 @@
 // wifi settings
 #define WIFI_SSID "Neo"
 #define WIFI_PASS "6138777771"
+#define MQTT_HOST "192.168.0.104"
+#define MQTT_PORT "1883"
 
 // Event group
 static EventGroupHandle_t wifi_event_group;
@@ -55,8 +57,6 @@ void mqtt_connected_callback(mqtt_client *client, mqtt_event_data_t *event_data)
 	// send data every 5 seconds
 	while(1) {
 		
-		// float temperature = ht21d_read_temperature();
-		// float humidity = ht21d_read_humidity();
 
 		float temperature = 55.555;
 		float humidity = 444.333;
@@ -74,8 +74,8 @@ void mqtt_connected_callback(mqtt_client *client, mqtt_event_data_t *event_data)
 
 // MQTT client configuration
 mqtt_settings settings = {
-	.host = "192.168.0.115",
-	.port = 1883,
+	.host = MQTT_HOST,
+	.port = MQTT_PORT,
 	.client_id = "espmqtt",
 	.clean_session = 0,
 	.keepalive = 120,

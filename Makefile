@@ -6,4 +6,3 @@
 PROJECT_NAME := mqtt
 
 include $(IDF_PATH)/make/project.mk
-
