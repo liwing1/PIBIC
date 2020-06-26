@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "workbench.editor.enablePreview": false,
+        "freertos.h": "c",
+        "stdio.h": "c",
+        "adc.h": "c",
+        "task.h": "c"
+    }
+}
