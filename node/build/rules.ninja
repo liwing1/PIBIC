@@ -1285,7 +1285,7 @@ rule CXX_STATIC_LIBRARY_LINKER____idf_lora
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = E:\liwka\.espressif\tools\cmake\3.13.4\bin\cmake.exe -SE:\liwka\Documents\esp\pibic-nd -BE:\liwka\Documents\esp\pibic-nd\build
+  command = E:\liwka\.espressif\tools\cmake\3.13.4\bin\cmake.exe -SE:\liwka\Documents\esp-idf\projects\PIBIC\node -BE:\liwka\Documents\esp-idf\projects\PIBIC\node\build
   description = Re-running CMake...
   generator = 1
 

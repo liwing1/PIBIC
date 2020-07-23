@@ -1,4 +1,4 @@
-# Install script for directory: E:/liwka/Documents/esp/pibic-gw/components/espmqtt
+# Install script for directory: E:/liwka/Documents/esp-idf/projects/PIBIC/gateway/components/espmqtt
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

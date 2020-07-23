@@ -1,39 +1,33 @@
 #include "mqttutils.h"
 
-EventGroupHandle_t esp32_event_group = NULL;
-
 const char *MQTT_TAG = "MQTT_SAMPLE";
 
 mqtt_client * gb_mqttClient = NULL;
 
-void connected_cb(void *self, void *params)
+void connected_cb(mqtt_client *self, mqtt_event_data_t *params)
 {
     mqtt_client *client = (mqtt_client *)self;
     const char topic_subscribe[] = "sensors/configuration";
     mqtt_subscribe(client, topic_subscribe, 1);
 }
 
-void subscribe_cb(void *self, void *params)
+void subscribe_cb(mqtt_client *self, mqtt_event_data_t *params)
 {
     ESP_LOGI(MQTT_TAG, "[APP] Subscribe ok, test publish msg");
     const char topic_publish[] = "sensors/values";
-    char body[32];
+    char body[25];
+    sprintf(body, "AGORAS");
     mqtt_client *client = (mqtt_client *)self;
-
-    if(xQueueReceive(rxQueue, (void*) body, (TickType_t) 5)){
-        mqtt_publish(client, topic_publish, body, strlen(body), 1, 0);
-    }
+    mqtt_publish(client, topic_publish, body, strlen(body), 1, 0);                            // sizeof()-1 to compensate for the trailing '\0' in the string
 }
 
-void publish_cb(void *self, void *params)
+void publish_cb(mqtt_client *self, mqtt_event_data_t *params)
 {
     xEventGroupSetBits(esp32_event_group, MQTT_PUBLISHED_BIT);
 }
 
-void data_cb(void *self, void *params)
+void data_cb(mqtt_client *client, mqtt_event_data_t *event_data)
 {
-    mqtt_client *client = (mqtt_client *)self;
-    mqtt_event_data_t *event_data = (mqtt_event_data_t *)params;
     char *topic = NULL, *data = NULL;
 
     if(event_data->data_offset == 0) {
@@ -60,10 +54,18 @@ void data_cb(void *self, void *params)
 
 mqtt_settings settings = {
     .host = WEB_SERVER,
+/*
+#if defined(CONFIG_MQTT_SECURITY_ON)
+    .port = 8883, // encrypted
+#else
+    .port = 1883, // unencrypted
+#endif
+*/
+    //.port = WEB_PORT,
     .port = WEB_PORT,
-    .client_id = "" ,
-    .username = "" ,
-    .password = "",
+    .client_id = " ",
+    .username = " ",
+    .password = " ",
     .clean_session = 0,
     .keepalive = 120,
     .lwt_topic = "",
@@ -94,7 +96,7 @@ void wifi_conn_init(void)
     };
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
     ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
-    ESP_LOGI(MQTT_TAG, "start the WIFI SSID:[%s] password:[%s]", WIFI_SSID, "******");
+    ESP_LOGI(MQTT_TAG, "start the WIFI SSID:[%s] password:[%s]", CONFIG_WIFI_SSID, "******");
     ESP_ERROR_CHECK(esp_wifi_start());
 }
 

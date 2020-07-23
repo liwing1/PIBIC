@@ -1,4 +1,4 @@
-# Install script for directory: E:/liwka/Documents/esp/pibic-nd/main
+# Install script for directory: E:/liwka/Documents/esp-idf/projects/PIBIC/node/main
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

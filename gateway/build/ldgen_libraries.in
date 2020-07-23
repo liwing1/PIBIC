@@ -57,5 +57,5 @@ $<TARGET_FILE:__idf_unity>
 $<TARGET_FILE:__idf_wifi_provisioning>
 $<TARGET_FILE:__idf_main>
 $<TARGET_FILE:__idf_espmqtt>
+$<TARGET_FILE:__idf_baseapp>
 $<TARGET_FILE:__idf_lora>
-$<TARGET_FILE:__idf_utils>

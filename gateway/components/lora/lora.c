@@ -478,12 +478,12 @@ void lora_dump_registers(void)
 
 void lora_enable_invertiq()
 {
-   lora_write_reg(REG_INVERTIQ,  0X66);
-   lora_write_reg(REG_INVERTIQ2, 0X19);
+   lora_write_reg(REG_INVERTIQ,  0x66);
+   lora_write_reg(REG_INVERTIQ2, 0x19);
 }
 
 void lora_disable_invertiq()
 {
-   lora_write_reg(REG_INVERTIQ,  0X27);
-   lora_write_reg(REG_INVERTIQ2, 0X1d);
+   lora_write_reg(REG_INVERTIQ,  0x27);
+   lora_write_reg(REG_INVERTIQ2, 0x1d);
 }

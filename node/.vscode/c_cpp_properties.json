@@ -5,7 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${env:IDF_PATH}/components/**",
-                "E:/liwka/Documents/esp/components/**"
+                "E:/liwka/Documents/esp-idf/projects/components/**"
             ],
             "defines": [
                 "_DEBUG",

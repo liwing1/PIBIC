@@ -6,6 +6,7 @@
         "adc.h": "c",
         "task.h": "c",
         "fstream": "c",
-        "sstream": "c"
+        "sstream": "c",
+        "header.h": "c"
     }
 }

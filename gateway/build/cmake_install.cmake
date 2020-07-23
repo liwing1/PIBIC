@@ -1,4 +1,4 @@
-# Install script for directory: E:/liwka/Documents/esp/pibic-gw
+# Install script for directory: E:/liwka/Documents/esp-idf/projects/PIBIC/gateway
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -34,7 +34,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("E:/liwka/Documents/esp/pibic-gw/build/esp-idf/cmake_install.cmake")
+  include("E:/liwka/Documents/esp-idf/projects/PIBIC/gateway/build/esp-idf/cmake_install.cmake")
 
 endif()
 
@@ -46,5 +46,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "E:/liwka/Documents/esp/pibic-gw/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "E:/liwka/Documents/esp-idf/projects/PIBIC/gateway/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
