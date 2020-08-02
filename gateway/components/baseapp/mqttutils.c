@@ -18,7 +18,7 @@ void subscribe_cb(mqtt_client *self, mqtt_event_data_t *params)
     char body[25];
     sprintf(body, "AGORAS");
     mqtt_client *client = (mqtt_client *)self;
-    mqtt_publish(client, topic_publish, body, strlen(body), 1, 0);                            // sizeof()-1 to compensate for the trailing '\0' in the string
+    mqtt_publish(client, topic_publish, body, strlen(body), 1, 0);
 }
 
 void publish_cb(mqtt_client *self, mqtt_event_data_t *params)

@@ -3,12 +3,12 @@
 
 EventGroupHandle_t esp32_event_group = NULL;
 SemaphoreHandle_t xMutex;
-// QueueHandle_t rxQueue;
+QueueHandle_t rxQueue;
 
 void lora_gw_receive(void *p)
 {
    uint8_t buf[32];
-   // rxQueue = xQueueCreate( 5, sizeof(buf) );
+   rxQueue = xQueueCreate( 5, sizeof(buf) );
 
    int x;
    for(;;) {
@@ -21,7 +21,7 @@ void lora_gw_receive(void *p)
             printf("Received: %s\n", buf);
             lora_receive();
          }
-         // xQueueSend(rxQueue, (void*) buf, (TickType_t) 0);
+         xQueueSend(rxQueue, (void*) buf, (TickType_t) 0);
          xSemaphoreGive(xMutex);
       }
 
@@ -58,14 +58,6 @@ void mqtt_tsk( void* p )
    }
 }
 
-// void temp_update( void* p )
-// {
-//    uint8_t buf[32];
-//    while(1){
-
-//    }
-// }
-
 void app_main()
 {
    lora_init();
@@ -77,9 +69,9 @@ void app_main()
 
    xMutex = xSemaphoreCreateMutex();
 
-   xTaskCreatePinnedToCore(&lora_gw_receive,"lora_gw_receive", 2048, NULL, 5, NULL, 1);
+   xTaskCreatePinnedToCore(&lora_gw_receive,"lora_gw_receive", 2048, NULL  , 5, NULL, 1);
 
-   xTaskCreatePinnedToCore(&lora_gw_send, "lora_gw_send", 2048, "gate", 5, NULL, 0);
+   xTaskCreatePinnedToCore(&lora_gw_send,   "lora_gw_send"   , 2048, "gate", 5, NULL, 0);
 
-   xTaskCreatePinnedToCore( mqtt_tsk, "mqtt_task",  2048, NULL, 4, NULL, 0);
+   xTaskCreatePinnedToCore(&mqtt_tsk,       "mqtt_task"      , 2048, NULL  , 4, NULL, 0);
 }
