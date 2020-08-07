@@ -26,7 +26,9 @@ float lora_packet_snr(void);
 void lora_close(void);
 int lora_initialized(void);
 void lora_dump_registers(void);
+
 void lora_enable_invertiq();
 void lora_disable_invertiq();
+uint8_t decode_lora_msg(uint8_t* rxmsg);
 
 #endif

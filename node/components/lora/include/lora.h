@@ -33,4 +33,5 @@ void lora_disable_invertiq();
 
 void lora_nd_receive(void *p);
 void lora_nd_send(void *p);
+void header_lora_msg(uint8_t* head_id, uint8_t* payload);
 #endif

@@ -4,6 +4,8 @@
         "freertos.h": "c",
         "stdio.h": "c",
         "adc.h": "c",
-        "task.h": "c"
+        "task.h": "c",
+        "adcfix.h": "c",
+        "queue.h": "c"
     }
 }

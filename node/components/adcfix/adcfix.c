@@ -14,14 +14,14 @@ void config_adc1(){
 }
 
 void GetAdcValue_Task(){
-	int gb_voltage = 0;
-	char mybuf[32];
-	myQueue = xQueueCreate(2, sizeof(mybuf));
+	float gb_voltage = 0;
+	char mybuf[16];
+	myQueue = xQueueCreate(3, sizeof(mybuf));
 
 	config_adc1();
 
 	while(1){
-		int voltage = 0;
+		float voltage = 0;
 
 		for( int i = 0; i < 100; i++){
 			voltage += adc1_get_raw( ADC1_CHANNEL_0 );
@@ -30,12 +30,12 @@ void GetAdcValue_Task(){
 		voltage /= 100;
 		voltage = esp_adc_cal_raw_to_voltage( voltage, &characteristics );
 
-		if( voltage - gb_voltage >= 5 || voltage - gb_voltage <= -5)
+		if( voltage - gb_voltage >= 2.5 || voltage - gb_voltage <= -2.5)
 		{
-			ESP_LOGI("ADC CAL", "variation: %d", voltage-gb_voltage);
+			ESP_LOGI("ADC CAL", "variation: %f", voltage-gb_voltage);
 			gb_voltage = voltage;
 
-			sprintf(mybuf, "%d", gb_voltage);
+			sprintf(mybuf, "%.1f", gb_voltage/10);
 			xQueueSend(myQueue, (void*) mybuf, (TickType_t) 0);
 		}
 		vTaskDelay(pdMS_TO_TICKS(5000));

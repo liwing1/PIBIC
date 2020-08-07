@@ -487,3 +487,11 @@ void lora_disable_invertiq()
    lora_write_reg(REG_INVERTIQ,  0X27);
    lora_write_reg(REG_INVERTIQ2, 0X1d);
 }
+
+void header_lora_msg(uint8_t* head_id, uint8_t* payload)
+{
+   char aux[16];
+
+   sprintf(aux, "%s%s", (char*)head_id, (char*)payload);
+   strcpy((char*)payload, aux);
+}

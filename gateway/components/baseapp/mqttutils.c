@@ -17,8 +17,7 @@ void subscribe_cb(mqtt_client *self, mqtt_event_data_t *params)
     const char topic_publish[] = "sensors/values";
     char body[25];
     sprintf(body, "AGORAS");
-    mqtt_client *client = (mqtt_client *)self;
-    mqtt_publish(client, topic_publish, body, strlen(body), 1, 0);
+    mqtt_publish(self, topic_publish, body, strlen(body), 1, 0);
 }
 
 void publish_cb(mqtt_client *self, mqtt_event_data_t *params)

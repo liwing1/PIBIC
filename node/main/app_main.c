@@ -30,7 +30,7 @@ void lora_nd_receive(void *p)
 
 void lora_nd_send(void *p)
 {
-   char mybuf[32];
+   char mybuf[16];
    while(1){
       if(myQueue != 0){
          if(xQueueReceive(myQueue, (void*) mybuf, (TickType_t) 5)){
@@ -38,7 +38,9 @@ void lora_nd_send(void *p)
                lora_idle();
                lora_disable_invertiq();
 
-               lora_send_packet((uint8_t*) mybuf, sizeof(mybuf));
+               header_lora_msg( (uint8_t*)p, (uint8_t*) mybuf );
+               lora_send_packet( (uint8_t*)mybuf, sizeof(mybuf) );
+               printf("lora send: %s\n", mybuf);
 
                lora_enable_invertiq();
                lora_receive();
@@ -63,5 +65,5 @@ void app_main()
 
    xTaskCreatePinnedToCore(&lora_nd_receive, "lora_nd_receive", 2048, NULL, 5, NULL, 0);
 
-   xTaskCreatePinnedToCore(&lora_nd_send, "lora_nd_send", 2048, NULL, 5, NULL, 1);
+   xTaskCreatePinnedToCore(&lora_nd_send, "lora_nd_send", 2048, "a", 5, NULL, 1);
 }

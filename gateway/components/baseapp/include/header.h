@@ -39,6 +39,10 @@
 #define WIFI_CONNECTED_BIT          BIT0
 #define MQTT_PUBLISHED_BIT          BIT1
 #define MQTT_INITIATE_PUBLISH_BIT   BIT2
+#define MQTT_NODE_A_PUBLISH         BIT3
+#define MQTT_NODE_B_PUBLISH         BIT4
+#define MQTT_NODE_C_PUBLISH         BIT5
+#define MQTT_ALL_NODES              (BIT3|BIT4|BIT5)
 
 extern EventGroupHandle_t esp32_event_group;
 
