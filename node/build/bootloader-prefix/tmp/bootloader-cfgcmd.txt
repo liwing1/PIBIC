@@ -1,1 +1,0 @@
-cmd='E:/liwka/.espressif/tools/cmake/3.13.4/bin/cmake.exe;-DSDKCONFIG=E:/liwka/Documents/esp-idf/projects/PIBIC/node/sdkconfig;-DIDF_PATH=E:/liwka/Documents/esp-idf;-DIDF_TARGET=esp32;-DPYTHON_DEPS_CHECKED=1;-DEXTRA_COMPONENT_DIRS=E:/liwka/Documents/esp-idf/components/bootloader;-DLEGACY_INCLUDE_COMMON_HEADERS=;-GNinja;<SOURCE_DIR><SOURCE_SUBDIR>'

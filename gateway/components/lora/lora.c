@@ -487,21 +487,3 @@ void lora_disable_invertiq()
    lora_write_reg(REG_INVERTIQ,  0x27);
    lora_write_reg(REG_INVERTIQ2, 0x1d);
 }
-
-uint8_t decode_lora_msg(uint8_t* rxmsg){
-   uint8_t header_id = *rxmsg;
-   
-   for (int i = 0; i <= 16; i++) {
-      *(rxmsg+i) = *(rxmsg+(i+1));
-   }
-   
-   return header_id;
-}
-
-// uint8_t decode_lora_msg(char** rxmsg){
-//    uint8_t head_id = **rxmsg;
-   
-//    *rxmsg = &(*(*rxmsg+1));
-   
-//    return head_id;
-// }

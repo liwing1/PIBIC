@@ -39,12 +39,12 @@
 #define WIFI_CONNECTED_BIT          BIT0
 #define MQTT_PUBLISHED_BIT          BIT1
 #define MQTT_INITIATE_PUBLISH_BIT   BIT2
-#define MQTT_NODE_A_PUBLISH         BIT3
-#define MQTT_NODE_B_PUBLISH         BIT4
-#define MQTT_NODE_C_PUBLISH         BIT5
-#define MQTT_ALL_NODES              (BIT3|BIT4|BIT5)
+
+#define CNT_ON                      gpio_set_level(17, 1)
+#define CNT_OFF                     gpio_set_level(17, 0)
 
 extern EventGroupHandle_t esp32_event_group;
+extern QueueHandle_t rxQueue;
 
 esp_err_t wifi_event_handler(void *ctx, system_event_t *event);
 
