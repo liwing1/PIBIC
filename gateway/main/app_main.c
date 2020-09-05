@@ -29,29 +29,29 @@ void lora_gw_receive(void *p)
    }
 }
 
-// void lora_gw_send(void *p)
-// {
-//    while(1){
-//       if ( xSemaphoreTake(xMutex, (TickType_t) 0xFFFFFFFF) == 1 ){
-//          lora_idle();
-//          lora_enable_invertiq();
+void lora_gw_send(void *p)
+{
+   if ( xSemaphoreTake(xMutex, (TickType_t) 0xFFFFFFFF) == 1 ){
+      lora_idle();
+      lora_enable_invertiq();
 
-//          lora_send_packet((uint8_t*) p, sizeof(p));
+      lora_send_packet((uint8_t*) p, sizeof(p));
 
-//          lora_disable_invertiq();
-//          lora_receive();
+      lora_disable_invertiq();
+      lora_receive();
 
-//          xSemaphoreGive(xMutex);
-//       }
-//       vTaskDelay(pdMS_TO_TICKS(3000));
-//    }
-// }
+      xSemaphoreGive(xMutex);
+   }
+}
 
 void mqtt_tsk( void* p )
 {
    while(1){
+      printf("mqtt update");
       xEventGroupWaitBits(esp32_event_group, MQTT_PUBLISHED_BIT       , true, true, portMAX_DELAY);
       xEventGroupWaitBits(esp32_event_group, MQTT_INITIATE_PUBLISH_BIT, true, true, portMAX_DELAY);
+      
+      mqtt_update();
       subscribe_cb(gb_mqttClient, NULL);
       
       vTaskDelay(pdMS_TO_TICKS(500));
@@ -70,8 +70,6 @@ void app_main()
    xMutex = xSemaphoreCreateMutex();
 
    xTaskCreatePinnedToCore(&lora_gw_receive,"lora_gw_receive", 2048, NULL  , 5, NULL, 0);
-
-   //xTaskCreatePinnedToCore(&lora_gw_send,   "lora_gw_send"   , 2048, "gate", 5, NULL, 0);
 
    xTaskCreatePinnedToCore(&mqtt_tsk,       "mqtt_task"      , 2048, NULL  , 4, NULL, 1);
 }

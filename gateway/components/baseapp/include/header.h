@@ -40,12 +40,15 @@
 #define MQTT_PUBLISHED_BIT          BIT1
 #define MQTT_INITIATE_PUBLISH_BIT   BIT2
 
-#define CNT_ON                      gpio_set_level(17, 1)
-#define CNT_OFF                     gpio_set_level(17, 0)
+#define LORA_CTL_OFF                BIT3
+#define LORA_CTL_ON                 BIT4
+#define LORA_AC_OFF                 BIT5
+#define LORA_AC_ON                  BIT6
 
 extern EventGroupHandle_t esp32_event_group;
 extern QueueHandle_t rxQueue;
+extern SemaphoreHandle_t xMutex;
 
-esp_err_t wifi_event_handler(void *ctx, system_event_t *event);
+void lora_gw_send(void *p);
 
 #endif //__HEADER_H__

@@ -4,46 +4,57 @@ const char *MQTT_TAG = "MQTT_SAMPLE";
 
 mqtt_client * gb_mqttClient = NULL;
 
-void mqtt_update(char *rx_buf)
+void mqtt_update(void)
 {
-    char topic_temp[20];
-    char topic_humi[20];
-    char temp_str[4];
-    char humi_str[4];
+    char rx_buf[16];
+    if(rxQueue != 0){
+        if(xQueueReceive(rxQueue, (void*)rx_buf, (TickType_t)5)){
+            char topic_temp[20];
+            char topic_humi[20];
+            char temp_str[4];
+            char humi_str[4];
 
-    char *head_id = strtok(rx_buf, "-");
+            char *head_id = strtok(rx_buf, "-");
 
-    if(!(head_id[0] >= 'a' && head_id[0] <= 'c')){
-        ESP_LOGI("ERROR", "INVALID HEADER");
-        return;
+            if(!(head_id[0] >= 'a' && head_id[0] <= 'c')){
+                ESP_LOGI("ERROR", "INVALID HEADER");
+                return;
+            }
+                
+
+            sprintf(topic_temp, "node_%s/temp", head_id);
+            sprintf(topic_humi, "node_%s/humi", head_id);
+
+            sprintf(temp_str, "%s", strtok(NULL, "-"));
+            mqtt_publish(gb_mqttClient, topic_temp, temp_str, strlen(temp_str), 1, 0);
+            printf("%s\n", temp_str);
+
+            sprintf(humi_str, "%s", strtok(NULL, "-"));
+            mqtt_publish(gb_mqttClient, topic_humi, humi_str, strlen(humi_str), 1, 0);
+            printf("%s\n", humi_str);
+        }
     }
-        
-
-    sprintf(topic_temp, "node_%s/temp", head_id);
-    sprintf(topic_humi, "node_%s/humi", head_id);
-
-    sprintf(temp_str, "%s", strtok(NULL, "-"));
-    mqtt_publish(gb_mqttClient, topic_temp, temp_str, strlen(temp_str), 1, 0);
-    printf("%s\n", temp_str);
-
-    sprintf(humi_str, "%s", strtok(NULL, "-"));
-    mqtt_publish(gb_mqttClient, topic_humi, humi_str, strlen(humi_str), 1, 0);
-    printf("%s\n", humi_str);
 }
 
 bool DecodePublishResponse(char *topic, char *data)
 {
     if(strstr(topic, "AC/onoff") != NULL){
         if(strstr(data, "1")){
-            ESP_LOGI("DecodePublishResponse","AC = ON");
-            CNT_ON;
+            ESP_LOGI("DecodePublishResponse","AC=ON");
+            lora_gw_send( "ON" );
         }
         else if(strstr(data, "0")){
-            ESP_LOGI("DecodePublishResponse","AC = OFF");
-            CNT_OFF;
+            ESP_LOGI("DecodePublishResponse","AC=OFF");
+            lora_gw_send( "OFF" );
         }
         return true;
     }
+    if(strstr(topic, "AC/therm") != NULL){
+        ESP_LOGI("DecodePublishResponse","AC_REF_UPDATE");
+        lora_gw_send( data );
+        return true;
+    }
+
     return false;
 }
 
@@ -54,15 +65,14 @@ void connected_cb(mqtt_client *self, mqtt_event_data_t *params)
 
 void subscribe_cb(mqtt_client *self, mqtt_event_data_t *params)
 {
-    char rx_buf[16];
     ESP_LOGI(MQTT_TAG, "[APP] Subscribe ok, test publish msg");
     mqtt_publish(self, "general/log", "MQTT_UPDATE", strlen("MQTT_UPDATE"), 1, 0);
 
-    if(rxQueue != 0){
-        if(xQueueReceive(rxQueue, (void*)rx_buf, (TickType_t)5)){
-            mqtt_update((char*)rx_buf);
-        }
-    }
+    // if(rxQueue != 0){
+    //     if(xQueueReceive(rxQueue, (void*)rx_buf, (TickType_t)5)){
+    //         mqtt_update((char*)rx_buf);
+    //     }
+    // }
 }
 
 void publish_cb(mqtt_client *self, mqtt_event_data_t *params)

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/semphr.h"
@@ -6,9 +7,25 @@
 #include "lora.h"
 //#include "adcfix.h"
 #include "DHT22.h"
+#include "driver/gpio.h"
+
+#define  CNT_ON    gpio_set_level(22, 1);
+#define  CNT_OFF   gpio_set_level(22, 0);
+
 
 SemaphoreHandle_t xMutex;
 QueueHandle_t myQueue;
+
+void DecodeGateWayMessage( char* buf ){
+   if(strstr(buf, "ON")){
+      printf("RELE ON\n");
+      CNT_ON;
+   }
+   else if(strstr(buf, "OFF")){
+      printf("RELE OFF\n");
+      CNT_OFF;
+   }
+}
 
 void lora_nd_receive(void *p)
 {
@@ -23,8 +40,8 @@ void lora_nd_receive(void *p)
             buf[x] = 0;
             printf("Received: %s\n", buf);
             lora_receive();
+            DecodeGateWayMessage( (char*)buf );
          }
-
          xSemaphoreGive(xMutex);
       }
       vTaskDelay(pdMS_TO_TICKS(100));
@@ -96,6 +113,9 @@ void app_main()
    lora_set_frequency(915e6);
    lora_enable_crc();
    
+   gpio_pad_select_gpio(GPIO_NUM_22); 
+   gpio_set_direction(GPIO_NUM_22,GPIO_MODE_OUTPUT);
+
    xMutex = xSemaphoreCreateMutex();
 
    xTaskCreatePinnedToCore(&DHT_task, "DHT_tsk", 2048, NULL, 5, NULL, 1);
