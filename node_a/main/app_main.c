@@ -9,12 +9,14 @@
 #include "DHT22.h"
 #include "driver/gpio.h"
 
-#define  CNT_ON    gpio_set_level(22, 1);
-#define  CNT_OFF   gpio_set_level(22, 0);
+#define  CNT_ON    gpio_set_level(GPIO_NUM_17, 1);
+#define  CNT_OFF   gpio_set_level(GPIO_NUM_17, 0);
 
 
 SemaphoreHandle_t xMutex;
 QueueHandle_t myQueue;
+
+uint32_t gb_temp_ref;
 
 void DecodeGateWayMessage( char* buf ){
    if(strstr(buf, "ON")){
@@ -23,7 +25,11 @@ void DecodeGateWayMessage( char* buf ){
    }
    else if(strstr(buf, "OFF")){
       printf("RELE OFF\n");
+      gb_temp_ref = 0;
       CNT_OFF;
+   }
+   else{
+      gb_temp_ref = atoi(buf);
    }
 }
 
@@ -103,6 +109,11 @@ void DHT_task(void *pvParameter)
          xQueueSend(myQueue, (void*) payload, (TickType_t) 0);         
       }
 
+      if (gb_temp_ref){
+         if(gb_temp > gb_temp_ref + 0.5) CNT_ON;
+         if(gb_temp < gb_temp_ref - 0.5) CNT_OFF;
+      }
+
 		vTaskDelay( pdMS_TO_TICKS(5000) );
 	}
 }
@@ -113,8 +124,8 @@ void app_main()
    lora_set_frequency(915e6);
    lora_enable_crc();
    
-   gpio_pad_select_gpio(GPIO_NUM_22); 
-   gpio_set_direction(GPIO_NUM_22,GPIO_MODE_OUTPUT);
+   gpio_pad_select_gpio(GPIO_NUM_17); 
+   gpio_set_direction(GPIO_NUM_17,GPIO_MODE_OUTPUT);
 
    xMutex = xSemaphoreCreateMutex();
 

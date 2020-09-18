@@ -21,7 +21,7 @@ void lora_gw_receive(void *p)
             printf("Received: %s\n", lora_rx_buf);
             lora_receive();
             xQueueSend(rxQueue, (void*)lora_rx_buf, (TickType_t) 0);
-            xEventGroupSetBits(esp32_event_group, MQTT_INITIATE_PUBLISH_BIT);
+            //xEventGroupSetBits(esp32_event_group, MQTT_INITIATE_PUBLISH_BIT);
          }
          xSemaphoreGive(xMutex);
       }
@@ -47,12 +47,9 @@ void lora_gw_send(void *p)
 void mqtt_tsk( void* p )
 {
    while(1){
-      printf("mqtt update");
-      xEventGroupWaitBits(esp32_event_group, MQTT_PUBLISHED_BIT       , true, true, portMAX_DELAY);
-      xEventGroupWaitBits(esp32_event_group, MQTT_INITIATE_PUBLISH_BIT, true, true, portMAX_DELAY);
-      
+      // xEventGroupWaitBits(esp32_event_group, MQTT_PUBLISHED_BIT       , true, true, portMAX_DELAY);
+      // xEventGroupWaitBits(esp32_event_group, MQTT_INITIATE_PUBLISH_BIT, true, true, portMAX_DELAY);
       mqtt_update();
-      subscribe_cb(gb_mqttClient, NULL);
       
       vTaskDelay(pdMS_TO_TICKS(500));
    }

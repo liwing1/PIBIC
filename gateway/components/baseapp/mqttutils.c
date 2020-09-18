@@ -60,24 +60,18 @@ bool DecodePublishResponse(char *topic, char *data)
 
 void connected_cb(mqtt_client *self, mqtt_event_data_t *params)
 {
-    mqtt_subscribe(self, "AC/onoff", 1);
+    mqtt_subscribe(self, "AC/therm", 1);
 }
 
 void subscribe_cb(mqtt_client *self, mqtt_event_data_t *params)
 {
     ESP_LOGI(MQTT_TAG, "[APP] Subscribe ok, test publish msg");
     mqtt_publish(self, "general/log", "MQTT_UPDATE", strlen("MQTT_UPDATE"), 1, 0);
-
-    // if(rxQueue != 0){
-    //     if(xQueueReceive(rxQueue, (void*)rx_buf, (TickType_t)5)){
-    //         mqtt_update((char*)rx_buf);
-    //     }
-    // }
 }
 
 void publish_cb(mqtt_client *self, mqtt_event_data_t *params)
 {
-    xEventGroupSetBits(esp32_event_group, MQTT_PUBLISHED_BIT);
+    //xEventGroupSetBits(esp32_event_group, MQTT_PUBLISHED_BIT);
 }
 
 void data_cb(mqtt_client *client, mqtt_event_data_t *event_data)
@@ -106,6 +100,11 @@ void data_cb(mqtt_client *client, mqtt_event_data_t *event_data)
     free(data);
 }
 
+void disconnected_cb(mqtt_client *client, mqtt_event_data_t *event_data)
+{
+
+}
+
 mqtt_settings settings = {
     .host = WEB_SERVER,
 /*
@@ -126,7 +125,7 @@ mqtt_settings settings = {
     .lwt_qos = 0,
     .lwt_retain = 0,
     .connected_cb = connected_cb,
-    //.disconnected_cb = disconnected_cb,
+    .disconnected_cb = disconnected_cb,
     //.reconnect_cb = reconnect_cb,
     .subscribe_cb = subscribe_cb,
     .publish_cb = publish_cb,

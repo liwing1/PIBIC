@@ -877,3 +877,17 @@
 77	131	6186970768776210	bootloader/bootloader.elf	72ad549e3dfaa553
 77	131	6186970768776210	bootloader/bootloader.bin	72ad549e3dfaa553
 77	131	6186970768776210	bootloader/bootloader.map	72ad549e3dfaa553
+21	11521	6209727295538675	build.ninja	2e515d2d98e25ef6
+101	429	6186970768776210	bootloader-prefix/src/bootloader-stamp/bootloader-build	72ad549e3dfaa553
+101	429	6186970768776210	bootloader/bootloader.elf	72ad549e3dfaa553
+101	429	6186970768776210	bootloader/bootloader.bin	72ad549e3dfaa553
+101	429	6186970768776210	bootloader/bootloader.map	72ad549e3dfaa553
+103	736	6209727303660508	esp-idf/app_update/CMakeFiles/__idf_app_update.dir/esp_app_desc.c.obj	f1fcadf898adc93c
+736	917	6209727305570938	esp-idf/app_update/libapp_update.a	c7026399c58f4f0e
+917	3093	6209727327209165	esp-idf/esp32/ld/esp32.project.ld	505737dee3e392a7
+3093	4568	6209727342011452	lora-teste.elf	401c22677157d412
+4569	4843	6209727344762074	.bin_timestamp	6b85089bf03339dc
+71	160	6186970768776210	bootloader-prefix/src/bootloader-stamp/bootloader-build	72ad549e3dfaa553
+71	160	6186970768776210	bootloader/bootloader.elf	72ad549e3dfaa553
+71	160	6186970768776210	bootloader/bootloader.bin	72ad549e3dfaa553
+71	160	6186970768776210	bootloader/bootloader.map	72ad549e3dfaa553

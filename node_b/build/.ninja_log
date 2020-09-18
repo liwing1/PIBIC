@@ -870,3 +870,13 @@
 75	125	6185986333595270	bootloader/bootloader.elf	892f0cc76054f308
 75	125	6185986333595270	bootloader/bootloader.bin	892f0cc76054f308
 75	125	6185986333595270	bootloader/bootloader.map	892f0cc76054f308
+8	10121	6211029509730919	build.ninja	f4dc7c9ef5c0d52c
+72	370	6185986333595270	bootloader-prefix/src/bootloader-stamp/bootloader-build	892f0cc76054f308
+72	370	6185986333595270	bootloader/bootloader.elf	892f0cc76054f308
+72	370	6185986333595270	bootloader/bootloader.bin	892f0cc76054f308
+72	370	6185986333595270	bootloader/bootloader.map	892f0cc76054f308
+74	1057	6211029520913743	esp-idf/app_update/CMakeFiles/__idf_app_update.dir/esp_app_desc.c.obj	f1fcadf898adc93c
+1058	1177	6211029522109080	esp-idf/app_update/libapp_update.a	c7026399c58f4f0e
+1177	3514	6211029545362410	esp-idf/esp32/ld/esp32.project.ld	fba50ae9662b2bdf
+3514	4680	6211029557085611	lora-teste.elf	3eb4e5e342cbe366
+4681	4888	6211029559096064	.bin_timestamp	f2463ce2d304befa
