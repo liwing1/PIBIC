@@ -59,3 +59,4 @@ $<TARGET_FILE:__idf_main>
 $<TARGET_FILE:__idf_DHT22-master>
 $<TARGET_FILE:__idf_adcfix>
 $<TARGET_FILE:__idf_lora>
+$<TARGET_FILE:__idf_tarablessd1306>

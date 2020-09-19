@@ -6203,6 +6203,7 @@ LOAD esp-idf/main/libmain.a
 LOAD esp-idf/DHT22-master/libDHT22-master.a
 LOAD esp-idf/adcfix/libadcfix.a
 LOAD esp-idf/lora/liblora.a
+LOAD esp-idf/tarablessd1306/libtarablessd1306.a
 LOAD esp-idf/asio/libasio.a
 LOAD esp-idf/coap/libcoap.a
 LOAD esp-idf/esp_gdbstub/libesp_gdbstub.a
