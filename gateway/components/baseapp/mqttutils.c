@@ -16,6 +16,8 @@ void mqtt_update(void)
 
             char *head_id = strtok(rx_buf, "-");
 
+            lora_gw_send("ACK");
+
             if(!(head_id[0] >= 'a' && head_id[0] <= 'c')){
                 ESP_LOGI("ERROR", "INVALID HEADER");
                 return;
@@ -102,7 +104,7 @@ void data_cb(mqtt_client *client, mqtt_event_data_t *event_data)
 
 void disconnected_cb(mqtt_client *client, mqtt_event_data_t *event_data)
 {
-
+    esp_restart();
 }
 
 mqtt_settings settings = {

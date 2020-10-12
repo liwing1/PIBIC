@@ -1,0 +1,14 @@
+{
+    "files.associations": {
+        "workbench.editor.enablePreview": false,
+        "freertos.h": "c",
+        "stdio.h": "c",
+        "adc.h": "c",
+        "task.h": "c",
+        "fstream": "c",
+        "sstream": "c",
+        "header.h": "c",
+        "*.ipp": "c",
+        "*.inc": "cpp"
+    }
+}

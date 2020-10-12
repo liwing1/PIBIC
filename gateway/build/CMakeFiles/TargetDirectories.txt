@@ -524,3 +524,10 @@ E:/liwka/Documents/esp-idf/projects/PIBIC/gateway/build/esp-idf/lora/CMakeFiles/
 E:/liwka/Documents/esp-idf/projects/PIBIC/gateway/build/esp-idf/lora/CMakeFiles/edit_cache.dir
 E:/liwka/Documents/esp-idf/projects/PIBIC/gateway/build/esp-idf/lora/CMakeFiles/rebuild_cache.dir
 E:/liwka/Documents/esp-idf/projects/PIBIC/gateway/build/esp-idf/lora/CMakeFiles/list_install_components.dir
+E:/liwka/Documents/esp-idf/projects/PIBIC/gateway/build/esp-idf/tarablessd1306/CMakeFiles/__idf_tarablessd1306.dir
+E:/liwka/Documents/esp-idf/projects/PIBIC/gateway/build/esp-idf/tarablessd1306/CMakeFiles/install/local.dir
+E:/liwka/Documents/esp-idf/projects/PIBIC/gateway/build/esp-idf/tarablessd1306/CMakeFiles/install.dir
+E:/liwka/Documents/esp-idf/projects/PIBIC/gateway/build/esp-idf/tarablessd1306/CMakeFiles/edit_cache.dir
+E:/liwka/Documents/esp-idf/projects/PIBIC/gateway/build/esp-idf/tarablessd1306/CMakeFiles/rebuild_cache.dir
+E:/liwka/Documents/esp-idf/projects/PIBIC/gateway/build/esp-idf/tarablessd1306/CMakeFiles/list_install_components.dir
+E:/liwka/Documents/esp-idf/projects/PIBIC/gateway/build/esp-idf/tarablessd1306/CMakeFiles/install/strip.dir

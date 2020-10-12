@@ -1,0 +1,18 @@
+{
+    "project_name":       "bootloader",
+    "project_path":       "E:/liwka/Documents/esp-idf/components/bootloader/subproject",
+    "build_dir":          "E:/liwka/Documents/esp-idf/projects/PIBIC/node_teste_2/build/bootloader",
+    "config_file":        "E:/liwka/Documents/esp-idf/projects/PIBIC/node_teste_2/sdkconfig",
+    "config_defaults":    "",
+    "app_elf":            "bootloader.elf",
+    "app_bin":            "bootloader.bin",
+    "git_revision":       "v4.0-dirty",
+    "phy_data_partition": "",
+    "monitor_baud" : "115200",
+    "config_environment" : {
+        "COMPONENT_KCONFIGS" : "E:/liwka/Documents/esp-idf/components/efuse/Kconfig;E:/liwka/Documents/esp-idf/components/esp32/Kconfig;E:/liwka/Documents/esp-idf/components/esp_common/Kconfig;E:/liwka/Documents/esp-idf/components/log/Kconfig;E:/liwka/Documents/esp-idf/components/spi_flash/Kconfig",
+        "COMPONENT_KCONFIGS_PROJBUILD" : "E:/liwka/Documents/esp-idf/components/bootloader/Kconfig.projbuild;E:/liwka/Documents/esp-idf/components/esptool_py/Kconfig.projbuild;E:/liwka/Documents/esp-idf/components/partition_table/Kconfig.projbuild"
+    },
+    "build_components" : [ "bootloader", "bootloader_support", "efuse", "esp32", "esp_common", "esp_rom", "esptool_py", "log", "main", "micro-ecc", "partition_table", "soc", "spi_flash", "xtensa", "" ],
+    "build_component_paths" : [ "E:/liwka/Documents/esp-idf/components/bootloader", "E:/liwka/Documents/esp-idf/components/bootloader_support", "E:/liwka/Documents/esp-idf/components/efuse", "E:/liwka/Documents/esp-idf/components/esp32", "E:/liwka/Documents/esp-idf/components/esp_common", "E:/liwka/Documents/esp-idf/components/esp_rom", "E:/liwka/Documents/esp-idf/components/esptool_py", "E:/liwka/Documents/esp-idf/components/log", "E:/liwka/Documents/esp-idf/components/bootloader/subproject/main", "E:/liwka/Documents/esp-idf/components/bootloader/subproject/components/micro-ecc", "E:/liwka/Documents/esp-idf/components/partition_table", "E:/liwka/Documents/esp-idf/components/soc", "E:/liwka/Documents/esp-idf/components/spi_flash", "E:/liwka/Documents/esp-idf/components/xtensa", "" ]
+}

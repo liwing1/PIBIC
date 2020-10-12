@@ -1,0 +1,13 @@
+# Target labels
+ bootloader
+# Source files and their labels
+E:/liwka/Documents/esp-idf/projects/PIBIC/gateway_teste/build/CMakeFiles/bootloader
+E:/liwka/Documents/esp-idf/projects/PIBIC/gateway_teste/build/CMakeFiles/bootloader.rule
+E:/liwka/Documents/esp-idf/projects/PIBIC/gateway_teste/build/CMakeFiles/bootloader-complete.rule
+E:/liwka/Documents/esp-idf/projects/PIBIC/gateway_teste/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
+E:/liwka/Documents/esp-idf/projects/PIBIC/gateway_teste/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
+E:/liwka/Documents/esp-idf/projects/PIBIC/gateway_teste/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
+E:/liwka/Documents/esp-idf/projects/PIBIC/gateway_teste/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule
+E:/liwka/Documents/esp-idf/projects/PIBIC/gateway_teste/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
+E:/liwka/Documents/esp-idf/projects/PIBIC/gateway_teste/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
+E:/liwka/Documents/esp-idf/projects/PIBIC/gateway_teste/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule

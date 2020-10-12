@@ -102,6 +102,7 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("E:/liwka/Documents/esp-idf/projects/PIBIC/gateway/build/esp-idf/espmqtt/cmake_install.cmake")
   include("E:/liwka/Documents/esp-idf/projects/PIBIC/gateway/build/esp-idf/baseapp/cmake_install.cmake")
   include("E:/liwka/Documents/esp-idf/projects/PIBIC/gateway/build/esp-idf/lora/cmake_install.cmake")
+  include("E:/liwka/Documents/esp-idf/projects/PIBIC/gateway/build/esp-idf/tarablessd1306/cmake_install.cmake")
 
 endif()
 
