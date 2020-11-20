@@ -900,3 +900,7 @@
 72	370	6238152452791826	bootloader/bootloader.elf	1ecfa258ad94347c
 72	370	6238152452791826	bootloader/bootloader.bin	1ecfa258ad94347c
 72	370	6238152452791826	bootloader/bootloader.map	1ecfa258ad94347c
+71	349	6238152452791826	bootloader-prefix/src/bootloader-stamp/bootloader-build	1ecfa258ad94347c
+71	349	6238152452791826	bootloader/bootloader.elf	1ecfa258ad94347c
+71	349	6238152452791826	bootloader/bootloader.bin	1ecfa258ad94347c
+71	349	6238152452791826	bootloader/bootloader.map	1ecfa258ad94347c

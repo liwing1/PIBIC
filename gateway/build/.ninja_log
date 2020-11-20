@@ -1945,3 +1945,11 @@
 72	309	6204058865716771	bootloader/bootloader.elf	f61e67eca5676c5d
 72	309	6204058865716771	bootloader/bootloader.bin	f61e67eca5676c5d
 72	309	6204058865716771	bootloader/bootloader.map	f61e67eca5676c5d
+71	426	6204058865716771	bootloader-prefix/src/bootloader-stamp/bootloader-build	f61e67eca5676c5d
+71	426	6204058865716771	bootloader/bootloader.elf	f61e67eca5676c5d
+71	426	6204058865716771	bootloader/bootloader.bin	f61e67eca5676c5d
+71	426	6204058865716771	bootloader/bootloader.map	f61e67eca5676c5d
+72	386	6204058865716771	bootloader-prefix/src/bootloader-stamp/bootloader-build	f61e67eca5676c5d
+72	386	6204058865716771	bootloader/bootloader.elf	f61e67eca5676c5d
+72	386	6204058865716771	bootloader/bootloader.bin	f61e67eca5676c5d
+72	386	6204058865716771	bootloader/bootloader.map	f61e67eca5676c5d

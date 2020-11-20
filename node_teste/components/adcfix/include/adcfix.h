@@ -12,7 +12,8 @@
 
 #define V_REF               1100
 
-void GetAdcValue_Task();
+float GetAdcValue_Task();
+void config_adc1();
 
 extern uint32_t gb_voltage;
 extern QueueHandle_t myQueue;

@@ -28,7 +28,8 @@ static const int I2CResetPin = 16;
 struct SSD1306_Device I2CDisplay;
 
 
-timer_idx_t timer;
+timer_idx_t timer0;
+timer_idx_t timer1;
 timer_config_t timer_configurations= {
    .alarm_en = TIMER_ALARM_DIS,
    .counter_en = TIMER_START,
@@ -40,6 +41,7 @@ timer_config_t timer_configurations= {
 
 
 SemaphoreHandle_t xMutex;
+SemaphoreHandle_t DHT_Mutex;
 QueueHandle_t myQueue;
 
 EventGroupHandle_t lora_event;
@@ -121,7 +123,7 @@ void lora_rx(void *p){
          }
          xSemaphoreGive(xMutex);
       }
-      vTaskDelay(pdMS_TO_TICKS(100));
+      vTaskDelay(pdMS_TO_TICKS(500));
    }
 }
 
@@ -131,9 +133,12 @@ void LoRa_task(void *p)
    char sendbuf[16];
    uint32_t lora_result; 
 
+   int cont = 0;
+   double ini_time = 0;
+
    while(1){
 
-      lora_result = xEventGroupWaitBits(lora_event, LORA_ALL, pdTRUE, pdTRUE, pdMS_TO_TICKS(1000));
+      lora_result = xEventGroupWaitBits(lora_event, LORA_ALL, pdTRUE, pdTRUE, pdMS_TO_TICKS(2000));
       if (lora_result == LORA_ALL){
       }
       else if (lora_result == LORA_SENT){
@@ -153,6 +158,15 @@ void LoRa_task(void *p)
             }
          }
       }
+
+      timer_get_counter_time_sec(TIMER_GROUP_1, timer1, &ini_time);
+      if (ini_time > 60){
+         printf("LORA: %d\n", cont);
+         cont = 0;
+         timer_set_counter_value( TIMER_GROUP_1, timer1,  0 );
+      }
+      else cont++;
+
       vTaskDelay(pdMS_TO_TICKS(500));
    }
 }
@@ -166,51 +180,49 @@ void DHT_task(void *pvParameter)
    float gb_temp = 0;
    float gb_humi = 0;
 
-   float cont = 0;
+   int cont = 0;
    double ini_time = 0;
 
 	while(1) {
       float temp = 0;
       float humi = 0;
-		
-		//while( readDHT() != DHT_OK);
 
-   
-      temp = GetAdcValue_Task()/10;
-      //humi = getHumidity();
-      if(temp > (gb_temp_ref + 0.2)){
-         CNT_OFF;
-         //printf("CNT_OFF %f\n", temp-gb_temp);
-         humi = 0;
-      } 
-      if(temp < (gb_temp_ref - 0.2)) {
-         CNT_ON;
-         humi = 100;
+      if( xSemaphoreTake(DHT_Mutex, (TickType_t)0xFFFFFFFF) == 1 ){
+         temp = getTemperature();
+         humi = getTemperature();
+         xSemaphoreGive(DHT_Mutex);
       }
-      
-      //printf(" HUMI %f\n", gb_humi);
+      //printf("%f\n", temp-gb_temp_ref);
 
-      if(abs(temp - gb_temp) >= 0.2 || humi != gb_humi){
+      if ((temp - gb_temp_ref) >= 0.2 || (temp - gb_temp_ref <=- 0.2)){
+
+         if(temp - gb_temp_ref >= 0.2){
+            CNT_OFF;
+            //printf("CNT_OFF %f\n", temp-gb_temp);
+         } 
+         if(temp - gb_temp_ref <=- 0.2) {
+            CNT_ON;
+         }
+
          gb_temp = temp;
          gb_humi = humi;
          sprintf(payload, "%.1f-%.1f\n", gb_temp, gb_humi);
-         sprintf(stemp, "A=%.1f", gb_temp);
+         sprintf(stemp, "B=%.1f", gb_temp);
          xQueueSend(myQueue, (void*) payload, (TickType_t) 0);
          SayHello( &I2CDisplay, stemp );
       }
 
 
-      timer_get_counter_time_sec(TIMER_GROUP_0, timer, &ini_time);
+      timer_get_counter_time_sec(TIMER_GROUP_0, timer0, &ini_time);
       if (ini_time > 60){
-         printf("AMOSTRAS: %d\n", cont);
+         printf("DTH: %d\n", cont);
          cont = 0;
-         timer_set_counter_value( TIMER_GROUP_0, timer,  0 );
+         timer_set_counter_value( TIMER_GROUP_0, timer0,  0 );
       }
       else cont++;
 
-      vTaskDelay( pdMS_TO_TICKS(500) );
+      vTaskDelay( pdMS_TO_TICKS(1000) );
    }
-}
 
 void app_main()
 {
@@ -222,8 +234,11 @@ void app_main()
    
    gpio_pad_select_gpio(GPIO_NUM_17); 
    gpio_set_direction(GPIO_NUM_17,GPIO_MODE_OUTPUT);
+   timer_init(TIMER_GROUP_0, timer0, &timer_configurations);
+   timer_init(TIMER_GROUP_1, timer1, &timer_configurations);
 
    xMutex = xSemaphoreCreateMutex();
+   DHT_Mutex = xSemaphoreCreateMutex();
    lora_event = xEventGroupCreate();
 
    if ( DefaultBusInit( ) == true ) {
@@ -233,7 +248,7 @@ void app_main()
 
    xTaskCreatePinnedToCore(&DHT_task, "DHT_tsk", 2048, NULL, 20, NULL, 0);
 
-   xTaskCreatePinnedToCore(&LoRa_task, "LoRa_task", 2048, "a", 5, NULL, 1);
+   xTaskCreatePinnedToCore(&LoRa_task, "LoRa_task", 2048, "b", 5, NULL, 1);
 
    xTaskCreatePinnedToCore(&lora_rx, "LoRa_rx", 2048, NULL, 5, NULL, 1);
 }

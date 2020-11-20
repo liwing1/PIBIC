@@ -6,7 +6,7 @@
 #include "freertos/queue.h"
 #include "freertos/event_groups.h"
 #include "lora.h"
-//#include "adcfix.h"
+#include "adcfix.h"
 #include "DHT22.h"
 #include "ssd1306.h"
 #include "ssd1306_draw.h"
@@ -14,6 +14,7 @@
 #include "ssd1306_default_if.h"
 #include "driver/gpio.h"
 #include "driver/timer.h"
+
 
 #define  CNT_ON    gpio_set_level(GPIO_NUM_17, 1);
 #define  CNT_OFF   gpio_set_level(GPIO_NUM_17, 0);
@@ -27,10 +28,8 @@ static const int I2CResetPin = 16;
 struct SSD1306_Device I2CDisplay;
 
 
-SemaphoreHandle_t xMutex;
-QueueHandle_t myQueue;
-
-timer_idx_t timer;
+timer_idx_t timer0;
+timer_idx_t timer1;
 timer_config_t timer_configurations= {
    .alarm_en = TIMER_ALARM_DIS,
    .counter_en = TIMER_START,
@@ -39,6 +38,10 @@ timer_config_t timer_configurations= {
    .auto_reload = TIMER_AUTORELOAD_DIS,
    .divider = 80,
 };
+
+
+SemaphoreHandle_t xMutex;
+QueueHandle_t myQueue;
 
 EventGroupHandle_t lora_event;
 static const uint32_t LORA_SENT = BIT0;
@@ -93,7 +96,7 @@ void lora_send(void *p, char* mybuf){
       lora_disable_invertiq();
 
       lora_send_packet( (uint8_t*)mybuf, 12 );
-      //printf("lora send: %s\n", mybuf);
+      printf("lora send: %s\n", mybuf);
 
       lora_enable_invertiq();
       lora_receive();
@@ -106,7 +109,6 @@ void lora_send(void *p, char* mybuf){
 void lora_rx(void *p){
    uint8_t buf[32];
    int x;
-
    while(1){
       if( xSemaphoreTake(xMutex, (TickType_t)0xFFFFFFFF) ==1 ){
          lora_enable_invertiq();
@@ -130,14 +132,185 @@ void LoRa_task(void *p)
    char sendbuf[16];
    uint32_t lora_result; 
 
+   int cont = 0;
+   double ini_time = 0;
+
    while(1){
 
-      lora_result = xEventGroupWaitBits(lora_event, LORA_ALL, pdTRUE, pdTRUE, pdMS_TO_TICKS(10));
+      lora_result = xEventGroupWaitBits(lora_event, LORA_ALL, pdTRUE, pdTRUE, pdMS_TO_TICKS(2000));
       if (lora_result == LORA_ALL){
       }
       else if (lora_result == LORA_SENT){
          lora_send(p, sendbuf);
-         //printf("SENT DATA AGAIN\n");
+         printf("SENT DATA AGAIN\n");
+      }
+      else if (lora_result == LORA_ACK){
+         printf("ACK NOT EXPECTED\n");
+         xEventGroupClearBits(lora_event, LORA_ACK);
+      }
+      else if (!(lora_result)){
+         if(myQueue != 0){
+            if(xQueueReceive(myQueue, (void*) sendbuf, (TickType_t) 5)){
+               header_lora_msg( (uint8_t*)p, (uint8_t*) sendbuf );
+               lora_send(p, sendbuf);
+               xEventGroupSetBits(lora_event, LORA_SENT);
+            }
+         }
+      }
+
+      timer_get_counter_time_sec(TIMER_GROUP_1, timer1, &ini_time);
+      if (ini_time > 60){
+         printf("LORA: %d\n", cont);
+         cont = 0;
+         timer_set_counter_value( TIMER_GROUP_1, timer1,  0 );
+      }
+      else cont++;
+
+      vTaskDelay(pdMS_TO_TICKS(500));
+   }
+}
+
+void DHT_task(void *pvParameter)
+{
+	//setDHTgpio( 23 );
+   char payload[16];
+   char stemp[16];
+   myQueue = xQueueCreate(5, sizeof(payload));
+   float gb_temp = 0;
+   float gb_humi = 0;
+
+   int cont = 0;
+   double ini_time = 0;
+
+	while(1) {
+      float temp = 0;
+      float humi = 0;
+		
+		//while( readDHT() != DHT_OK);
+
+   
+      temp = GetAdcValue_Task()/10;
+      //humi = getHumidity();
+      if(temp > (gb_temp_ref + 0.2)){
+         CNT_OFF;
+         //printf("CNT_OFF %f\n", temp-gb_temp);
+         humi = 0;
+      } 
+      if(temp < (gb_temp_ref - 0.2)) {
+         CNT_ON;
+         humi = 100;
+      }
+      
+      //printf(" HUMI %f\n", gb_humi);
+
+      if(abs(temp - gb_temp) >= 0.2 || humi != gb_humi){
+         gb_temp = temp;
+         gb_humi = humi;
+         sprintf(payload, "%.1f-%.1f\n", gb_temp, gb_humi);
+         sprintf(stemp, "A=%.1f", gb_temp);
+         xQueueSend(myQueue, (void*) payload, (TickType_t) 0);
+         SayHello( &I2CDisplay, stemp );
+      }
+
+
+      timer_get_counter_time_sec(TIMER_GROUP_0, timer0, &ini_time);
+      if (ini_time > 60){
+         printf("DTH: %d\n", cont);
+         cont = 0;
+         timer_set_counter_value( TIMER_GROUP_0, timer0,  0 );
+      }
+      else cont++;
+
+      vTaskDelay( pdMS_TO_TICKS(500) );
+   }
+}
+
+void app_main()
+{
+   lora_init();
+   lora_set_frequency(915e6);
+   lora_enable_crc();
+
+   config_adc1();
+   
+   gpio_pad_select_gpio(GPIO_NUM_17); 
+   gpio_set_direction(GPIO_NUM_17,GPIO_MODE_OUTPUT);
+   timer_init(TIMER_GROUP_0, timer0, &timer_configurations);
+   timer_init(TIMER_GROUP_1, timer1, &timer_configurations);
+
+   xMutex = xSemaphoreCreateMutex();
+   lora_event = xEventGroupCreate();
+
+   char payload[16];
+   char stemp[16];
+   myQueue = xQueueCreate(5, sizeof(payload));
+   float gb_temp = 0;
+   float gb_humi = 0;
+
+
+   char sendbuf[16];
+   uint32_t lora_result; 
+
+   char *p = "a";
+   int cont = 0;
+   double ini_time = 0;
+
+   if ( DefaultBusInit( ) == true ) {
+      printf( "BUS Init lookin good...\n" );
+      SetupDemo( &I2CDisplay, &Font_liberation_mono_17x30 );
+   }
+
+   xTaskCreatePinnedToCore(&LoRa_task, "LoRa_task", 2048, "a", 5, NULL, 1);
+
+   while (1)
+   {
+      float temp = 0;
+      float humi = 0;
+		
+		//while( readDHT() != DHT_OK);
+
+   
+      temp = GetAdcValue_Task()/10;
+      //humi = getHumidity();
+      if(temp > (gb_temp_ref + 0.2)){
+         CNT_OFF;
+         //printf("CNT_OFF %f\n", temp-gb_temp);
+         humi = 0;
+      } 
+      if(temp < (gb_temp_ref - 0.2)) {
+         CNT_ON;
+         humi = 100;
+      }
+      
+      //printf(" HUMI %f\n", gb_humi);
+
+      if(abs(temp - gb_temp) >= 0.2 || humi != gb_humi){
+         gb_temp = temp;
+         gb_humi = humi;
+         sprintf(payload, "%.1f-%.1f\n", gb_temp, gb_humi);
+         sprintf(stemp, "A=%.1f", gb_temp);
+         xQueueSend(myQueue, (void*) payload, (TickType_t) 0);
+         SayHello( &I2CDisplay, stemp );
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+      lora_result = xEventGroupWaitBits(lora_event, LORA_ALL, pdTRUE, pdTRUE, pdMS_TO_TICKS(2000));
+      if (lora_result == LORA_ALL){
+      }
+      else if (lora_result == LORA_SENT){
+         lora_send(p, sendbuf);
+         printf("SENT DATA AGAIN\n");
       }
       else if (lora_result == LORA_ACK){
          printf("ACK NOT EXPECTED\n");
@@ -157,85 +330,22 @@ void LoRa_task(void *p)
 
 
 
-      vTaskDelay(pdMS_TO_TICKS(10));
-   }
-}
-
-void DHT_task(void *pvParameter)
-{
-	setDHTgpio( 23 );
-   char payload[16];
-   char stemp[16];
-   myQueue = xQueueCreate(3, sizeof(payload));
-   float gb_temp = 0, gb_humi = 0;
-
-   double ini_time;
-   int cont = 0;
 
 
-	while(1) {
-      float temp = 0, humi = 0;
-		
-		while( readDHT() != DHT_OK);
-
-      // for (int i = 0; i < 10; i++)
-      // {
-      //    temp += getTemperature();
-      //    humi += getHumidity();
-      //    ets_delay_us(1000);
-      // }
-      // temp = (temp/10);
-      // humi = (humi/10);
-      temp = getTemperature();
-      humi = getHumidity();
 
 
-      if ((abs(temp - gb_temp) >= 0.2 || abs(humi - gb_humi) >= 0.2) && temp >= 20)
-      {
-         gb_temp = temp;
-         gb_humi = humi;
 
-         sprintf(payload, "%.1f-%.1f\n", gb_temp, gb_humi);
-         sprintf(stemp, "A=%.1f", gb_temp);
-         xQueueSend(myQueue, (void*) payload, (TickType_t) 0);
-         SayHello( &I2CDisplay, stemp );
-      }
-      if(gb_temp > gb_temp_ref + 0.2) CNT_OFF;
-      if(gb_temp < gb_temp_ref - 0.2) CNT_ON;
 
-      timer_get_counter_time_sec(TIMER_GROUP_0, timer, &ini_time);
+
+
+      timer_get_counter_time_sec(TIMER_GROUP_0, timer0, &ini_time);
       if (ini_time > 60){
-         printf("AMOSTRAS: %d\n", cont);
+         printf("DTH: %d\n", cont);
          cont = 0;
-         timer_set_counter_value( TIMER_GROUP_0, timer,  0 );
+         timer_set_counter_value( TIMER_GROUP_0, timer0,  0 );
       }
       else cont++;
 
-		vTaskDelay( pdMS_TO_TICKS(10) );
-	}
-}
-
-void app_main()
-{
-   lora_init();
-   lora_set_frequency(915e6);
-   lora_enable_crc();
-   
-   gpio_pad_select_gpio(GPIO_NUM_17); 
-   gpio_set_direction(GPIO_NUM_17,GPIO_MODE_OUTPUT);
-
-   xMutex = xSemaphoreCreateMutex();
-   lora_event = xEventGroupCreate();
-   timer_init(TIMER_GROUP_0, timer, &timer_configurations);
-
-   if ( DefaultBusInit( ) == true ) {
-      printf( "BUS Init lookin good...\n" );
-      SetupDemo( &I2CDisplay, &Font_liberation_mono_17x30 );
    }
-
-   xTaskCreatePinnedToCore(&DHT_task, "DHT_tsk", 2048, NULL, 5, NULL, 1);
-
-   xTaskCreatePinnedToCore(&LoRa_task, "LoRa_task", 2048, "a", 5, NULL, 0);
-
-   xTaskCreatePinnedToCore(&lora_rx, "LoRa_rx", 2048, NULL, 5, NULL, 0);
+   
 }
